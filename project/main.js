@@ -25,7 +25,13 @@ camera.position.z = 5;
 
 const canvas = document.querySelector("canvas.threejs");
 
-const renderer = new THREE.WebGLRenderer({canvas});
+const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
+// use antialias: true which help us to fix show pixel view smoothly. This is a software solution.
+
+// console.log(window.devicePixelRatio) 1.25 for my laptop
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+// because mobile device contain 4k or hight pixel. we dont need that much.
+// this is a hardware solution which help us to show pixel smoothly.
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 
