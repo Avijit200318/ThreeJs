@@ -3,20 +3,42 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const scene = new THREE.Scene();
 
-const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+// const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
+// see documentation to know the othes value in the boxgeometry.
+
+// const geometry = new THREE.SphereGeometry(1, 16, 16)
+// const geometry = new THREE.PlaneGeometry(1, 1, 2, 2)
+  const geometry = new THREE.TorusKnotGeometry(20, 3, 100, 16)
+
 const cubeMaterial = new THREE.MeshBasicMaterial({color: "red", wireframe: true});
 
-const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+// custom geometry.
 
-scene.add(cubeMesh);
+// const vertices = new Float32Array([
+//   0, 0, 0,
+//   0, 2, 0,
+//   2, 0, 0,
+// ]);
 
-// cubeMesh.rotation.y = Math.PI * 0.25;
-// normaly threejs support radian for roation
-// cubeMesh.rotation.y = THREE.MathUtils.degToRad(45);
+// const bufferAttribute = new THREE.BufferAttribute(vertices, 3);
 
+// 3 is the itemSize it help the buffer to know how much points we store in the array.
+
+// const geometry = new THREE.BufferGeometry();
+// geometry.setAttribute('position', bufferAttribute);
 
 const axisHelper = new THREE.AxesHelper(2);
 scene.add(axisHelper);
+
+const cubeMesh = new THREE.Mesh(geometry, cubeMaterial);
+
+
+// const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+scene.add(cubeMesh);
+
+// custom geometry in three js
+
 
 // prespective camera
 
@@ -25,8 +47,6 @@ const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerH
 
 camera.position.z = 5;
 
-// distance between the mesh and the camera
-console.log(cubeMesh.position.distanceTo(camera.position))
 
 const canvas = document.querySelector("canvas.threejs");
 
@@ -58,12 +78,10 @@ const renderLoop = () => {
   const delta = currentTime - previousTime;
   previousTime = currentTime;
 
-  cubeMesh.rotation.y += THREE.MathUtils.degToRad(1) * delta * 4;
-  // end of animation. This animation look same it did not depend of the frame rate of the device.
+  // cubeMesh.rotation.y += THREE.MathUtils.degToRad(1) * delta * 4;
 
-  cubeMesh.scale.x = Math.sin(currentTime) + 1;
-  // Math.sin is like sin vlaue in math which value goes to +1 to -1 this help us create different effect in three js.
-  cubeMesh.position.x = Math.sin(currentTime) + 1;
+  // cubeMesh.scale.x = Math.sin(currentTime) + 1;
+  // cubeMesh.position.x = Math.sin(currentTime) + 1;
 
   controls.update();
   renderer.render(scene, camera);
