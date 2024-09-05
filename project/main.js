@@ -14,11 +14,6 @@ scene.add(cubeMesh);
 // normaly threejs support radian for roation
 // cubeMesh.rotation.y = THREE.MathUtils.degToRad(45);
 
-cubeMesh.rotation.reorder('YXZ');
-// the default order is xyz.
-
-cubeMesh.rotation.x = THREE.MathUtils.degToRad(45);
-cubeMesh.rotation.y = THREE.MathUtils.degToRad(90);
 
 const axisHelper = new THREE.AxesHelper(2);
 scene.add(axisHelper);
@@ -53,7 +48,22 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+// animation
+const clock = new THREE.Clock();
+let previousTime = 0;
+
 const renderLoop = () => {
+
+  const currentTime = clock.getElapsedTime();
+  const delta = currentTime - previousTime;
+  previousTime = currentTime;
+
+  cubeMesh.rotation.y += THREE.MathUtils.degToRad(1) * delta * 4;
+  // end of animation. This animation look same it did not depend of the frame rate of the device.
+
+  cubeMesh.scale.x = Math.sin(currentTime) + 1;
+  // Math.sin is like sin vlaue in math which value goes to +1 to -1 this help us create different effect in three js.
+  cubeMesh.position.x = Math.sin(currentTime) + 1;
 
   controls.update();
   renderer.render(scene, camera);
