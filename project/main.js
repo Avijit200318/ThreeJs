@@ -3,14 +3,28 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const scene = new THREE.Scene();
 
-// const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
+const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
+const planeGeometry = new THREE.PlaneGeometry(1, 1);
 // see documentation to know the othes value in the boxgeometry.
 
 // const geometry = new THREE.SphereGeometry(1, 16, 16)
 // const geometry = new THREE.PlaneGeometry(1, 1, 2, 2)
-  const geometry = new THREE.TorusKnotGeometry(20, 3, 100, 16)
+  // const geometry = new THREE.TorusKnotGeometry(20, 3, 100, 16)
 
-const cubeMaterial = new THREE.MeshBasicMaterial({color: "red", wireframe: true});
+const cubeMaterial = new THREE.MeshBasicMaterial({color: "yellow"});
+
+// or we can use it like  this.
+// cubeMaterial.color = new THREE.Color('red')
+// cubeMaterial.transparent = true;
+// cubeMaterial.opacity = 0.5;
+
+// three js by default only have onside metarial property. if we create a plane and rotate it 180deg then at the backside of the plane when camera goes then it become disapiear.
+cubeMaterial.side = THREE.DoubleSide;
+
+const fog = new THREE.Fog(0xffffff, 1, 10);
+scene.fog = fog;
+
+scene.background = new THREE.Color(0xffffff);
 
 // custom geometry.
 
@@ -27,15 +41,20 @@ const cubeMaterial = new THREE.MeshBasicMaterial({color: "red", wireframe: true}
 // const geometry = new THREE.BufferGeometry();
 // geometry.setAttribute('position', bufferAttribute);
 
-const axisHelper = new THREE.AxesHelper(2);
-scene.add(axisHelper);
+// const axisHelper = new THREE.AxesHelper(2);
+// scene.add(axisHelper);
 
-const cubeMesh = new THREE.Mesh(geometry, cubeMaterial);
+// const cubeMesh = new THREE.Mesh(geometry, cubeMaterial);
 
 
-// const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
-
+const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const cubeMesh2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const plane = new THREE.Mesh(planeGeometry, cubeMaterial);
+cubeMesh2.position.x = 1.5;
+plane.position.x = -1.5;
 scene.add(cubeMesh);
+scene.add(cubeMesh2);
+scene.add(plane);
 
 // custom geometry in three js
 
