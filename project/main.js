@@ -3,63 +3,35 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const scene = new THREE.Scene();
 
-const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
+const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 const planeGeometry = new THREE.PlaneGeometry(1, 1);
-// see documentation to know the othes value in the boxgeometry.
+const touristKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16);
 
-// const geometry = new THREE.SphereGeometry(1, 16, 16)
-// const geometry = new THREE.PlaneGeometry(1, 1, 2, 2)
-  // const geometry = new THREE.TorusKnotGeometry(20, 3, 100, 16)
-
-const cubeMaterial = new THREE.MeshBasicMaterial({color: "yellow"});
-
-// or we can use it like  this.
-// cubeMaterial.color = new THREE.Color('red')
-// cubeMaterial.transparent = true;
-// cubeMaterial.opacity = 0.5;
-
-// three js by default only have onside metarial property. if we create a plane and rotate it 180deg then at the backside of the plane when camera goes then it become disapiear.
-cubeMaterial.side = THREE.DoubleSide;
-
-const fog = new THREE.Fog(0xffffff, 1, 10);
-scene.fog = fog;
-
-scene.background = new THREE.Color(0xffffff);
-
-// custom geometry.
-
-// const vertices = new Float32Array([
-//   0, 0, 0,
-//   0, 2, 0,
-//   2, 0, 0,
-// ]);
-
-// const bufferAttribute = new THREE.BufferAttribute(vertices, 3);
-
-// 3 is the itemSize it help the buffer to know how much points we store in the array.
-
-// const geometry = new THREE.BufferGeometry();
-// geometry.setAttribute('position', bufferAttribute);
-
-// const axisHelper = new THREE.AxesHelper(2);
-// scene.add(axisHelper);
-
-// const cubeMesh = new THREE.Mesh(geometry, cubeMaterial);
+const material = new THREE.MeshPhongMaterial();
+// to use this material we also need a light;
+material.castShadow = true;
+material.receiveShadow = true;
 
 
-const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
-const cubeMesh2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
-const plane = new THREE.Mesh(planeGeometry, cubeMaterial);
+const cubeMesh = new THREE.Mesh(cubeGeometry, material);
+const cubeMesh2 = new THREE.Mesh(touristKnotGeometry, material);
 cubeMesh2.position.x = 1.5;
+const plane = new THREE.Mesh(planeGeometry, material);
 plane.position.x = -1.5;
+
 scene.add(cubeMesh);
 scene.add(cubeMesh2);
 scene.add(plane);
 
-// custom geometry in three js
+// light for mesh
+// const light = new THREE.AmbientLight(0xffffff, 0.5);
+// scene.add(light);
 
+const pointLight = new THREE.PointLight(0xffffff, 4);
+pointLight.position.set(5,5,5);
+pointLight.castShadow = true;
+scene.add(pointLight);
 
-// prespective camera
 
 const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 200);
 
@@ -90,6 +62,7 @@ window.addEventListener('resize', () => {
 // animation
 const clock = new THREE.Clock();
 let previousTime = 0;
+console.log(scene)
 
 const renderLoop = () => {
 
