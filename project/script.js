@@ -14,19 +14,19 @@ const planeGeometry = new THREE.PlaneGeometry(1, 1);
 const touristKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16);
 
 // initialize the material
-const material = new THREE.MeshPhongMaterial();
+const material = new THREE.MeshStandardMaterial();
+material.color = new THREE.Color('green');
 
-// add shininess
-material.shininess = 90;
-material.specular = new THREE.Color(0xffffff);  // Set specular color to white
-
-
-// this pane help us to check the shininess of the material
-pane.addBinding(material, 'shininess', {
+pane.addBinding(material, 'metalness', {
   min: 0,
-  max: 100,
-  step: 1
-});
+  max: 1,
+  step: 0.01
+})
+pane.addBinding(material, 'roughness', {
+  min: 0,
+  max: 1,
+  step: 0.01
+})
 
 // initialize the mesh
 const mesh = new THREE.Mesh(geometry, material);
@@ -42,7 +42,7 @@ scene.add(mesh2);
 scene.add(plane);
 
 // set light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
 directionalLight.position.set(5, 5, 5);
 directionalLight.castShadow = true;  // Enable shadows for the directional light
 directionalLight.shadow.mapSize.width = 1024;  // Adjust shadow quality
