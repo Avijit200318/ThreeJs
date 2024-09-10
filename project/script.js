@@ -14,12 +14,25 @@ const planeGeometry = new THREE.PlaneGeometry(1, 1);
 const touristKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16);
 
 // initialize the material
-const material = new THREE.MeshLambertMaterial();
+const material = new THREE.MeshPhongMaterial();
+
+// add shininess
+material.shininess = 90;
+material.specular = new THREE.Color(0xffffff);  // Set specular color to white
+
+
+// this pane help us to check the shininess of the material
+pane.addBinding(material, 'shininess', {
+  min: 0,
+  max: 100,
+  step: 1
+});
 
 // initialize the mesh
 const mesh = new THREE.Mesh(geometry, material);
 const mesh2 = new THREE.Mesh(touristKnotGeometry, material);
 const plane = new THREE.Mesh(planeGeometry, material);
+// mesh.castShadow = true;
 
 mesh2.position.x = 1.5;
 plane.position.x = -1.5;
@@ -29,11 +42,18 @@ scene.add(mesh2);
 scene.add(plane);
 
 // set light
-const light = new THREE.AmbientLight(0xffffff, 0.1);
-scene.add(light);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+directionalLight.position.set(5, 5, 5);
+directionalLight.castShadow = true;  // Enable shadows for the directional light
+directionalLight.shadow.mapSize.width = 1024;  // Adjust shadow quality
+directionalLight.shadow.mapSize.height = 1024;
+directionalLight.shadow.camera.near = 0.5;
+directionalLight.shadow.camera.far = 20;
 
-const pointLight = new THREE.PointLight(0xffffff, 1);
-pointLight.position.set(5,5,5);
+scene.add(directionalLight);
+
+const pointLight = new THREE.PointLight(0xffffff, 1.5);
+pointLight.position.set(5, 5, 5);
 scene.add(pointLight);
 
 // initialize the camera
@@ -43,6 +63,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   200
 );
+
 camera.position.z = 5;
 
 // initialize the renderer
@@ -51,6 +72,7 @@ const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias: true,
 });
+renderer.shadowMap.enabled = true;  // Enable shadow map in the renderer
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
