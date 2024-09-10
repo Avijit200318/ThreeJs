@@ -14,7 +14,7 @@ const planeGeometry = new THREE.PlaneGeometry(1, 1);
 const touristKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16);
 
 // initialize the material
-const material = new THREE.MeshStandardMaterial();
+const material = new THREE.MeshPhysicalMaterial();
 material.color = new THREE.Color('green');
 
 pane.addBinding(material, 'metalness', {
@@ -23,6 +23,16 @@ pane.addBinding(material, 'metalness', {
   step: 0.01
 })
 pane.addBinding(material, 'roughness', {
+  min: 0,
+  max: 1,
+  step: 0.01
+})
+pane.addBinding(material, 'reflectivity', {
+  min: 0,
+  max: 1,
+  step: 0.01
+})
+pane.addBinding(material, 'clearcoat', {
   min: 0,
   max: 1,
   step: 0.01
