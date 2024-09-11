@@ -19,14 +19,38 @@ const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
 const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
 
 // initialize the texture
-const textureTest = textureLoader.load('/texture/whispy-grass-meadow-bl/wispy-grass-meadow_albedo.png');
-// console.log(textureTest)
+// const grassTexture = textureLoader.load('/texture/whispy-grass-meadow-bl/wispy-grass-meadow_albedo.png');
 
+const grassTexture = textureLoader.load('/texture/space-cruiser-panels2-bl/space-cruiser-panels2_albedo.png');
+
+// repeat the texture y direction 10 times and x 10 times
+grassTexture.repeat.set(10, 10);
+// repeat the textrue both y and x
+grassTexture.wrapS = THREE.RepeatWrapping;
+grassTexture.wrapT = THREE.RepeatWrapping;
+// grassTexture.wrapS = THREE.MirroredRepeatWrapping;
+// grassTexture.wrapT = THREE.MirroredRepeatWrapping;
+
+// grassTexture.offset.x = 0.5;
+// offset is used to set the texture propely position. for example if we want to add some design to the middle.
+
+// this pane create a gui which help us to select the perfect value of the texture.
+pane.addBinding(grassTexture, 'offset', {
+  x: {
+    min: -1,
+    max: 1,
+    step: 0.001
+  },
+  y: {
+    min: -1,
+    max: 1,
+    step: 0.001
+  }
+})
 
 // initialize the material
 const material = new THREE.MeshBasicMaterial();
-material.map = textureTest;
-material.color = new THREE.Color("red");
+material.map = grassTexture;
 
 // create group
 const group = new THREE.Group();
@@ -38,6 +62,8 @@ const plane = new THREE.Mesh(planeGeometry, material);
 
 mesh2.position.x = 1.5;
 plane.position.x = -1.5;
+plane.rotation.x = -(Math.PI * 0.5);
+plane.scale.set(100, 100);
 
 // we can also define it this way
 const sphere = new THREE.Mesh();
@@ -52,9 +78,12 @@ cylinder.position.y = -1.5;
 scene.add(plane);
 scene.add(cylinder);
 scene.add(sphere);
+scene.add(sphere);
+scene.add(mesh);
+scene.add(mesh2);
 // we can use this also
 // scene.add(sphere, cylinder);
-group.add(mesh2, mesh);
+group.add(plane);
 scene.add(group);
 
 // set light
@@ -70,10 +99,11 @@ const camera = new THREE.PerspectiveCamera(
   35,
   window.innerWidth / window.innerHeight,
   0.1,
-  200
+  10000
 );
 
-camera.position.z = 5;
+camera.position.z = 10;
+camera.position.y = 5;
 
 // initialize the renderer
 const canvas = document.querySelector("canvas.threejs");
@@ -97,19 +127,11 @@ window.addEventListener("resize", () => {
 
 // render the scene
 const renderloop = () => {
-
-  // scene.children.forEach((child) => {
+  // group.children.forEach((child) => {
   //   if(child instanceof THREE.Mesh){
   //     child.rotation.y += 0.01;
   //   }
   // })
-  // but the proble of this method is if we have to much mesh and we want only some of them to rotate then we have to create a group.
-
-  group.children.forEach((child) => {
-    if(child instanceof THREE.Mesh){
-      child.rotation.y += 0.01;
-    }
-  })
 
   controls.update();
   renderer.render(scene, camera);
