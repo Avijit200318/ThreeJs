@@ -13,10 +13,31 @@ const textureLoader = new THREE.TextureLoader();
 
 // initialize the geometry
 const geometry = new THREE.BoxGeometry(1, 1, 1);
+// console.log(geometry)
+
+const uv2geometry = new THREE.BufferAttribute(geometry.attributes.uv.array, 2);
+geometry.setAttribute('uv2', uv2geometry);
+
 const planeGeometry = new THREE.PlaneGeometry(1, 1);
+
+const uv2Plane = new THREE.BufferAttribute(geometry.attributes.uv.array, 2);
+geometry.setAttribute('uv2', uv2Plane);
+
 const touristKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16);
+
+const uv2Tourist = new THREE.BufferAttribute(geometry.attributes.uv.array, 2);
+geometry.setAttribute('uv2', uv2Tourist);
+
 const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+
+const uv2Sphere = new THREE.BufferAttribute(geometry.attributes.uv.array, 2);
+geometry.setAttribute('uv2', uv2Sphere);
+
 const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+
+const uv2Cylinder = new THREE.BufferAttribute(geometry.attributes.uv.array, 2);
+geometry.setAttribute('uv2', uv2Cylinder);
+
 
 // initialize the texture
 const grassAlbedo = textureLoader.load('/texture/whispy-grass-meadow-bl/wispy-grass-meadow_albedo.png');
@@ -39,6 +60,20 @@ material.metalnessMap = grassMetalic;
 material.metalness = 0.1;
 // if we used the metalic image then we set manually metalness. but since the image did not have any metalness then we have to commment the image to see it.
 
+material.normalMap = grassNormal;
+// tell threejs how the light simulate to the texture to create a realistic look
+
+material.displacementMap = grassHeight;
+material.displacementScale = 0.1
+
+material.aoMap = grassAo;
+// material.aoMapIntensity = 1;
+
+pane.addBinding(material, 'aoMapIntensity', {
+  min: 0,
+  max: 1, 
+  step: 0.01
+})
 
 // create group
 const group = new THREE.Group();
