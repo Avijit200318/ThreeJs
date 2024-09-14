@@ -37,7 +37,7 @@ const venusMaterial = new THREE.MeshStandardMaterial({map: venusTexture});
 const marsMaterial = new THREE.MeshStandardMaterial({map: marsTexture});
 
 
-const planet = [
+const planets = [
   {
     name: 'Mercury',
     radius: 0.5,
@@ -85,16 +85,39 @@ const planet = [
         material: moonMaterial,
       },
       {
-        name: 'Demons',
-        redius: 0.2,
+        name: 'Dmons',
+        radius: 0.2,
         distance: 3,
-        speed: 0.015,
-        color: 0xffffff,
+        speed: 0.0015,
         material: moonMaterial,
       }
     ]
   },
 ]
+
+const planetMesh = planets.map((planet) => {
+  // planet
+  const planetMesh = new THREE.Mesh(sphereGeometry, planet.material);
+  planetMesh.scale.setScalar(planet.radius);
+  planetMesh.position.x = planet.distance;
+
+  scene.add(planetMesh);
+
+  // moon
+  planet.moons.forEach((moon) => {
+    const moonMesh = new THREE.Mesh(sphereGeometry, moon.material);
+    moonMesh.scale.setScalar(moon.radius);
+    moonMesh.position.x = moon.distance;
+
+    planetMesh.add(moonMesh);
+  })
+
+  return planetMesh;
+})
+
+// light
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
 
 // initialize the camera
 const camera = new THREE.PerspectiveCamera(
