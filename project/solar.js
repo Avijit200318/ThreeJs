@@ -14,6 +14,8 @@ const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
 
 // add texture
 const textureLoader = new THREE.TextureLoader();
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+cubeTextureLoader.setPath('/planetTexture/cubemap/');
 
 const sunTexture = textureLoader.load('/planetTexture/2k_sun.jpg');
 const earthTexture = textureLoader.load('/planetTexture/2k_earth_daymap.jpg');
@@ -22,23 +24,34 @@ const mercuryTexture = textureLoader.load('/planetTexture/2k_mercury.jpg');
 const moonTexture = textureLoader.load('/planetTexture/2k_moon.jpg');
 const venusTexture = textureLoader.load('/planetTexture/2k_venus_surface.jpg');
 
-const backgroundTexture = textureLoader.load('/planetTexture/2k_stars_milky_way.jpg');
+// to set the background texture
+// const backgroundTexture = textureLoader.load('/planetTexture/2k_stars_milky_way.jpg');
+// scene.background = backgroundTexture;
 
-scene.background = backgroundTexture;
+const backgroundCubeMap = cubeTextureLoader.load([
+  'px.png',
+  'nx.png',
+  'py.png',
+  'ny.png',
+  'pz.png',
+  'nz.png'
+]);
+
+scene.background = backgroundCubeMap;
 
 // materials for planet
-const sunMaterial = new THREE.MeshBasicMaterial({map: sunTexture});
+const sunMaterial = new THREE.MeshBasicMaterial({ map: sunTexture });
 // since we don't need any shadow for sun so we are using meshBasic material.
 
 const sun = new THREE.Mesh(sphereGeometry, sunMaterial);
 sun.scale.set(5, 5, 5);
 scene.add(sun);
 
-const mercuryMaterial = new THREE.MeshStandardMaterial({map: mercuryTexture});
-const earthMaterial = new THREE.MeshStandardMaterial({map: earthTexture});
-const moonMaterial = new THREE.MeshStandardMaterial({map: moonTexture});
-const venusMaterial = new THREE.MeshStandardMaterial({map: venusTexture});
-const marsMaterial = new THREE.MeshStandardMaterial({map: marsTexture});
+const mercuryMaterial = new THREE.MeshStandardMaterial({ map: mercuryTexture });
+const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTexture });
+const moonMaterial = new THREE.MeshStandardMaterial({ map: moonTexture });
+const venusMaterial = new THREE.MeshStandardMaterial({ map: venusTexture });
+const marsMaterial = new THREE.MeshStandardMaterial({ map: marsTexture });
 
 const planets = [
   {
@@ -122,7 +135,7 @@ const planetMesh = planets.map((planet) => {
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
 scene.add(ambientLight);
 
-const pointLight = new THREE.PointLight(0xffffff, 300);
+const pointLight = new THREE.PointLight(0xffffff, 400);
 scene.add(pointLight)
 
 // initialize the camera
