@@ -22,6 +22,10 @@ const mercuryTexture = textureLoader.load('/planetTexture/2k_mercury.jpg');
 const moonTexture = textureLoader.load('/planetTexture/2k_moon.jpg');
 const venusTexture = textureLoader.load('/planetTexture/2k_venus_surface.jpg');
 
+const backgroundTexture = textureLoader.load('/planetTexture/2k_stars_milky_way.jpg');
+
+scene.background = backgroundTexture;
+
 // materials for planet
 const sunMaterial = new THREE.MeshBasicMaterial({map: sunTexture});
 // since we don't need any shadow for sun so we are using meshBasic material.
@@ -35,7 +39,6 @@ const earthMaterial = new THREE.MeshStandardMaterial({map: earthTexture});
 const moonMaterial = new THREE.MeshStandardMaterial({map: moonTexture});
 const venusMaterial = new THREE.MeshStandardMaterial({map: venusTexture});
 const marsMaterial = new THREE.MeshStandardMaterial({map: marsTexture});
-
 
 const planets = [
   {
@@ -116,8 +119,11 @@ const planetMesh = planets.map((planet) => {
 })
 
 // light
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
 scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0xffffff, 300);
+scene.add(pointLight)
 
 // initialize the camera
 const camera = new THREE.PerspectiveCamera(
@@ -126,7 +132,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   400
 );
-camera.position.z = 100;
+camera.position.z = 50;
 camera.position.y = 5;
 
 // initialize the renderer
@@ -148,9 +154,25 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+console.log(planetMesh)
 
 // render loop
 const renderloop = () => {
+  planetMesh.forEach((ele, index) => {
+    // earth's own axis roation
+    ele.rotation.y += planets[index].speed;
+    // sun orbit wise rotation
+    ele.position.x = Math.sin(ele.rotation.y) * planets[index].distance;
+    ele.position.z = Math.cos(ele.rotation.y) * planets[index].distance;
+
+    //moon animation
+    ele.children.forEach((moon, moonIndex) => {
+      // moon'w own axis roation
+      moon.rotation.y += planets[index].moons[moonIndex].speed;
+      moon.position.x = Math.sin(moon.rotation.y) * planets[index].moons[moonIndex].distance;
+      moon.position.z = Math.cos(moon.rotation.y) * planets[index].moons[moonIndex].distance;
+    })
+  })
 
   controls.update();
   renderer.render(scene, camera);
