@@ -12,27 +12,89 @@ const scene = new THREE.Scene();
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
 // we need only one geometry and we are going to scale it different size.
 
-const sunMaterial = new THREE.MeshBasicMaterial({color: 0xfff700});
+// add texture
+const textureLoader = new THREE.TextureLoader();
+
+const sunTexture = textureLoader.load('/planetTexture/2k_sun.jpg');
+const earthTexture = textureLoader.load('/planetTexture/2k_earth_daymap.jpg');
+const marsTexture = textureLoader.load('/planetTexture/2k_mars.jpg');
+const mercuryTexture = textureLoader.load('/planetTexture/2k_mercury.jpg');
+const moonTexture = textureLoader.load('/planetTexture/2k_moon.jpg');
+const venusTexture = textureLoader.load('/planetTexture/2k_venus_surface.jpg');
+
+// materials for planet
+const sunMaterial = new THREE.MeshBasicMaterial({map: sunTexture});
 // since we don't need any shadow for sun so we are using meshBasic material.
 
 const sun = new THREE.Mesh(sphereGeometry, sunMaterial);
 sun.scale.set(5, 5, 5);
 scene.add(sun);
 
-const earthMaterial = new THREE.MeshBasicMaterial({color: 'blue'});
-const earth  = new THREE.Mesh(sphereGeometry, earthMaterial);
-earth.position.x = 10;
+const mercuryMaterial = new THREE.MeshStandardMaterial({map: mercuryTexture});
+const earthMaterial = new THREE.MeshStandardMaterial({map: earthTexture});
+const moonMaterial = new THREE.MeshStandardMaterial({map: moonTexture});
+const venusMaterial = new THREE.MeshStandardMaterial({map: venusTexture});
+const marsMaterial = new THREE.MeshStandardMaterial({map: marsTexture});
 
-scene.add(earth);
 
-const moonMaterial = new THREE.MeshBasicMaterial({color: 'gray'});
-const moon = new THREE.Mesh(sphereGeometry, moonMaterial);
-moon.scale.setScalar(0.3);
-moon.position.x = 2;
-
-earth.add(moon);
-// we add moon as a child of earth instead of scene.
-
+const planet = [
+  {
+    name: 'Mercury',
+    radius: 0.5,
+    distance: 10,
+    speed: 0.01,
+    material: mercuryMaterial,
+    moons: []
+  },
+  {
+    name: 'Venus',
+    radius: 0.8,
+    distance: 15,
+    speed: 0.007,
+    material: venusMaterial,
+    moons: []
+  },
+  {
+    name: 'Earth',
+    radius: 1,
+    distance: 20,
+    speed: 0.005,
+    material: earthMaterial,
+    moons: [
+      {
+        name: 'Moon',
+        radius: 0.3,
+        distance: 3,
+        speed: 0.015,
+        material: moonMaterial,
+      }
+    ]
+  },
+  {
+    name: 'Mars',
+    radius: 0.7,
+    distance: 25,
+    speed: 0.003,
+    material: marsMaterial,
+    moons: [
+      {
+        name: 'Moon',
+        radius: 0.1,
+        distance: 2,
+        speed: 0.02,
+        material: moonMaterial,
+      },
+      {
+        name: 'Demons',
+        redius: 0.2,
+        distance: 3,
+        speed: 0.015,
+        color: 0xffffff,
+        material: moonMaterial,
+      }
+    ]
+  },
+]
 
 // initialize the camera
 const camera = new THREE.PerspectiveCamera(
@@ -63,19 +125,9 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// initialize a clock
-const clock = new THREE.Clock();
 
 // render loop
 const renderloop = () => {
-  const elapsedTime = clock.getElapsedTime();
-  // add animation here inside the render looop
-  earth.rotation.y += 0.01
-  earth.position.x = Math.sin(elapsedTime) * 10;
-  earth.position.z = Math.cos(elapsedTime) * 10;
-
-  moon.position.x = Math.sin(elapsedTime) * 2;
-  moon.position.z = Math.cos(elapsedTime) * 2;
 
   controls.update();
   renderer.render(scene, camera);
