@@ -24,29 +24,29 @@ const brickBasecolor = textureLoader.load("/texture/wall/Stylized_Bricks_005_bas
 const brickRoughness = textureLoader.load("/texture/wall/Stylized_Bricks_005_roughness.png");
 const brickNormal = textureLoader.load("/texture/wall/Stylized_Bricks_005_normal.png");
 
-const grassAmbient = textureLoader.load("/texture/grass/Grass_005_AmbientOcclusion.jpg");
-const grassBasecolor = textureLoader.load("/texture/grass/Grass_005_BaseColor.jpg");
-const grassRoughness = textureLoader.load("/texture/grass/Grass_005_Roughness.jpg");
-const grassNormal = textureLoader.load("/texture/grass/Grass_005_Normal.jpg");
-const grassHeight = textureLoader.load("/texture/grass/Grass_005_Height.png");
+const grassAmbient = textureLoader.load("/texture/grass/Stylized_Grass_001_ambientOcclusion.jpg");
+const grassBasecolor = textureLoader.load("/texture/grass/Stylized_Grass_001_basecolor.jpg");
+const grassRoughness = textureLoader.load("/texture/grass/Stylized_Grass_001_roughness.jpg");
+const grassNormal = textureLoader.load("/texture/grass/Stylized_Grass_001_normal.jpg");
+const grassHeight = textureLoader.load("/texture/grass/Stylized_Grass_001_height.png");
 
 // repeat value for the textures
 grassAmbient.repeat.set(8, 8);
 grassBasecolor.repeat.set(8, 8);
-grassRoughness.repeat.set(8, 8);
+// grassRoughness.repeat.set(8, 8);
 grassNormal.repeat.set(8, 8);
 grassHeight.repeat.set(8, 8);
 
 // repeating the textures
 grassAmbient.wrapS = THREE.RepeatWrapping;
 grassBasecolor.wrapS = THREE.RepeatWrapping;
-grassRoughness.wrapS = THREE.RepeatWrapping;
+// grassRoughness.wrapS = THREE.RepeatWrapping;
 grassNormal.wrapS = THREE.RepeatWrapping;
 grassHeight.wrapS = THREE.RepeatWrapping;
 
 grassAmbient.wrapT = THREE.RepeatWrapping;
 grassBasecolor.wrapT = THREE.RepeatWrapping;
-grassRoughness.wrapT = THREE.RepeatWrapping;
+// grassRoughness.wrapT = THREE.RepeatWrapping;
 grassNormal.wrapT = THREE.RepeatWrapping;
 grassHeight.wrapT = THREE.RepeatWrapping;
 
@@ -63,7 +63,7 @@ planeGeomerty.setAttribute('uv2', uv2Plane);
 boxGeometry.setAttribute('uv2', uv2Box);
 
 // all materials
-const material = new THREE.MeshStandardMaterial({color: "#90EE90"});
+const material = new THREE.MeshStandardMaterial();
 const houseMaterial = new THREE.MeshStandardMaterial()
 const roofMaterial = new THREE.MeshStandardMaterial({color: "#65816a"});
 const doorMaterial = new THREE.MeshStandardMaterial();
@@ -156,6 +156,7 @@ for(let i = 0; i< 50; i++){
   graveMesh.rotation.y = (Math.random() - 0.5) * 0.4;
   // this Math.random full value give us value from -0.5 to 0.5
   graveMesh.rotation.z = (Math.random() - 0.5) * 0.4;
+  graveMesh.castShadow = true;
   graves.add(graveMesh);
 }
 
@@ -173,13 +174,13 @@ doorLight.position.set(0, 2, 2.5);
 house.add(doorLight);
 
 // add ghosts
-const ghost1 = new THREE.PointLight('#ff00ff', 2, 3);
+const ghost1 = new THREE.PointLight('#ff00ff', 1, 3);
 scene.add(ghost1);
 
-const ghost2 = new THREE.PointLight('#00ffff', 2, 3);
+const ghost2 = new THREE.PointLight('#00ffff', 1, 3);
 scene.add(ghost2);
 
-const ghost3 = new THREE.PointLight('#ffff00', 2, 3);
+const ghost3 = new THREE.PointLight('#ffff00', 1, 3);
 scene.add(ghost3);
 
 
@@ -192,6 +193,39 @@ const canvas = document.querySelector("canvas.threejs");
 
 const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+// add shadow
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+ghost1.castShadow = true;
+ghost2.castShadow = true;
+ghost3.castShadow = true;
+doorLight.castShadow = true;
+bushMesh.castShadow = true;
+bushMesh2.castShadow = true;
+bushMesh3.castShadow = true;
+bushMesh4.castShadow = true;
+
+planeMesh.receiveShadow = true;
+// object can cast shadow but we have to show them on plane
+
+// optimize shadows
+ghost1.shadow.mapSize.width = 256;
+ghost1.shadow.mapSize.height = 256;
+ghost1.shadow.camera.far = 7;
+
+ghost2.shadow.mapSize.width = 256;
+ghost2.shadow.mapSize.height = 256;
+ghost2.shadow.camera.far = 7;
+
+ghost3.shadow.mapSize.width = 256;
+ghost3.shadow.mapSize.height = 256;
+ghost3.shadow.camera.far = 7;
+
+doorLight.shadow.mapSize.width = 256;
+doorLight.shadow.mapSize.height = 256;
+doorLight.shadow.camera.far = 7;
 
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
@@ -221,7 +255,7 @@ const rendererLoop = () => {
   ghost2.position.z = Math.sin(ghost2Angle) * 5;
   ghost2.position.y = Math.sin(elapsedTime * 3) + Math.sin(elapsedTime * 2);
   
-  const ghost3Angle = -elapsedTime * 0.18;
+  const ghost3Angle = -elapsedTime * 0.4;
   ghost3.position.x = Math.cos(ghost3Angle) * (7 + Math.sin(elapsedTime * 2.5));
   ghost3.position.z = Math.sin(ghost3Angle) * (7 + Math.sin(elapsedTime * 2.5));
   ghost3.position.y = Math.sin(elapsedTime * 3) + Math.sin(elapsedTime * 2);
