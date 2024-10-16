@@ -38,6 +38,27 @@ const sectionMesh = [mesh1, mesh2, mesh3];
 
 scene.add(mesh1, mesh2, mesh3);
 
+// particles
+const particlesCount = 200;
+const position = new Float32Array(particlesCount * 3);
+
+for(let i = 0; i< particlesCount; i++){
+    position[i*3 + 0] = (Math.random() - 0.5) * 10;
+    position[i*3 + 1] = objectDistance * 0.5 - Math.random() * objectDistance * sectionMesh.length;
+    position[i*3 + 2] = (Math.random() - 0.5) * 10;
+}
+
+const particleGeometry = new THREE.BufferGeometry();
+particleGeometry.setAttribute('position', new THREE.BufferAttribute( position, 3 ));
+
+const pointMaterial = new THREE.PointsMaterial({
+    color: 0xffffff,
+    sizeAttenuation: true,
+    size: 0.03
+})
+
+const pointsMesh = new THREE.Points( particleGeometry, pointMaterial );
+scene.add(pointsMesh);
 
 // light
 const directionalLight = new THREE.DirectionalLight('#ffffff', 1);
@@ -74,7 +95,6 @@ let scrollY = window.scrollY;
 
 window.addEventListener('scroll', () => {
     scrollY = window.scrollY;
-    console.log(scrollY)
 })
 
 // cursor position
