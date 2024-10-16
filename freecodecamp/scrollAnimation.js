@@ -38,6 +38,7 @@ const sectionMesh = [mesh1, mesh2, mesh3];
 
 scene.add(mesh1, mesh2, mesh3);
 
+
 // light
 const directionalLight = new THREE.DirectionalLight('#ffffff', 1);
 directionalLight.position.set(1, 1, 0);
@@ -88,19 +89,32 @@ window.addEventListener('mousemove', (event) => {
 })
 
 const clock = new THREE.Clock();
-
+let priviousTime = 0;
 const rendererLoop = () => {
 
     const elapsedTime = clock.getElapsedTime();
 
+    // delta time
+    const dletaTime = elapsedTime - priviousTime;
+    priviousTime = elapsedTime;
+
     // animate camera
     camera.position.y = - scrollY / window.innerHeight * objectDistance;
 
-    const parallaxX = cursor.x;
-    const parallaxY = - cursor.y;
-    cameraGroup.position.x = parallaxX;
-    cameraGroup.position.y = parallaxY;
+    const parallaxX = cursor.x * 0.5;
+    const parallaxY = - cursor.y * 0.5;
+    // cameraGroup.position.x = parallaxX;
+    // cameraGroup.position.y = parallaxY;
 
+    // cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 0.02;
+    // cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 0.02;
+
+    // but here we get a problem for high frequency device this function run more times than the low frequency then we will see animation difference between devices to fix this problem lets create a delta time.
+
+    cameraGroup.position.x += (parallaxX - cameraGroup.position.x) * 5 * dletaTime;
+    cameraGroup.position.y += (parallaxY - cameraGroup.position.y) * 5 * dletaTime;
+    // now the mouse move animation time is same for all the devices.
+    
     for(const mesh of sectionMesh){
         mesh.rotation.x = elapsedTime * 0.1;
         mesh.rotation.y = elapsedTime * 0.12;
