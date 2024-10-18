@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import gsap from "gsap";
 
 const scene = new THREE.Scene();
 // texture
@@ -93,8 +94,25 @@ window.addEventListener('resize', () => {
 // scroll animation
 let scrollY = window.scrollY;
 
+// to know section
+let currentSection = 0;
+
+
 window.addEventListener('scroll', () => {
     scrollY = window.scrollY;
+
+    // if we devide the scrollY value to the section height then when we move to the next section then we get 1. and to next next section we get 2.
+    const newSection = Math.round(scrollY/window.innerHeight);
+    if(newSection !== currentSection){
+        currentSection = newSection;
+        console.log(sectionMesh[currentSection]);
+        gsap.to(sectionMesh[currentSection].rotation, {
+            duration: 1.5,
+            x: "+=6",
+            y: "+=3",
+            z: "+=1.5",
+        })
+    }
 })
 
 // cursor position
@@ -136,8 +154,8 @@ const rendererLoop = () => {
     // now the mouse move animation time is same for all the devices.
     
     for(const mesh of sectionMesh){
-        mesh.rotation.x = elapsedTime * 0.1;
-        mesh.rotation.y = elapsedTime * 0.12;
+        mesh.rotation.x += dletaTime * 0.1;
+        mesh.rotation.y += dletaTime * 0.12;
     }
 
     renderer.render(scene, camera);
