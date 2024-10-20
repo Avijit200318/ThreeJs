@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
@@ -20,11 +19,11 @@ const scene = new THREE.Scene();
 // camera
 const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
 
-camera.position.z =4;
+camera.position.z = 3.5;
 
 const canvas = document.querySelector("canvas.threejs");
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 
 renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -47,6 +46,7 @@ const rgbShiftPass = new ShaderPass(RGBShiftShader);
 rgbShiftPass.uniforms['amount'].value = 0.0015;
 composer.addPass(rgbShiftPass);
 
+let model;
 
 new RGBELoader().load('/pond_bridge_night_1k.hdr', (texture) => {
   const envMap = pmremGenerator.fromEquirectangular(texture).texture;
@@ -58,14 +58,12 @@ new RGBELoader().load('/pond_bridge_night_1k.hdr', (texture) => {
   const loader = new GLTFLoader();
 
   loader.load('./DamagedHelmet.gltf', (gltf) => {
-    scene.add(gltf.scene);
+    model = gltf.scene;
+    scene.add(model);
   }, undefined, (error) => {
     console.log("An error occured while loading the GLTF model: ", error);
   });
 })
-
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -74,9 +72,17 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 })
 
+window.addEventListener('mousemove', (e) => {
+  if(model){
+    const rotationX = (e.clientX / window.innerWidth - 0.5) * Math.PI * 0.3;
+    const rotationY = (e.clientY / window.innerWidth - 0.5) * Math.PI * 0.3;
+    model.rotation.y = rotationX;
+    model.rotation.x = rotationY;
+  }
+})
+
 const rendererLoop = () => {
 
-  controls.update();
   renderer.render(scene, camera);
   window.requestAnimationFrame(rendererLoop);
   composer.render();
