@@ -2,8 +2,11 @@ import * as THREE from "three";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
-// import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
-// import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js'
+import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js'
+import {RGBShiftShader} from 'three/addons/shaders/RGBShiftShader.js'
 
 const scene = new THREE.Scene();
 
@@ -35,9 +38,19 @@ renderer.outputEncoding = THREE.sRGBEncoding;
 const pmremGenerator = new THREE.PMREMGenerator(renderer);
 pmremGenerator.compileEquirectangularShader();
 
+// preprocessing
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const rgbShiftPass = new ShaderPass(RGBShiftShader);
+rgbShiftPass.uniforms['amount'].value = 0.0015;
+composer.addPass(rgbShiftPass);
+
+
 new RGBELoader().load('/pond_bridge_night_1k.hdr', (texture) => {
   const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-  scene.background = envMap;
+  // scene.background = envMap;
   scene.environment = envMap;
   texture.dispose();
   pmremGenerator.dispose();
@@ -66,6 +79,7 @@ const rendererLoop = () => {
   controls.update();
   renderer.render(scene, camera);
   window.requestAnimationFrame(rendererLoop);
+  composer.render();
 }
 
 rendererLoop();
